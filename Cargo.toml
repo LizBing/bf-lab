@@ -1,2 +1,2 @@
 [workspace]
-members = ["crates/bf-lexer"]
+members = ["crates/bf-frontend"]
