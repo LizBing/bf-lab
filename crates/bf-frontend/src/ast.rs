@@ -20,7 +20,7 @@ pub enum ASTNodeKind {
     Move(i32),
     Input,
     Output,
-    Loop(Vec<ASTNode>),
+    Loop { body: Vec<ASTNode> },
     Invalid(InvalidNode)
 }
 

@@ -121,7 +121,7 @@ impl Parser {
 
         self.step();
 
-        let mut nodes = Vec::new();
+        let mut body = Vec::new();
 
         let is_closed;
         loop {
@@ -142,7 +142,7 @@ impl Parser {
                 };
 
                 if let Some(n) = node {
-                    nodes.push(n);
+                    body.push(n);
                 }
             } else {
                 is_closed = false;
@@ -156,7 +156,7 @@ impl Parser {
         };
         
         if is_closed {
-            ASTNode { kind: ASTNodeKind::Loop(nodes), span }
+            ASTNode { kind: ASTNodeKind::Loop{ body }, span }
         } else {
             ASTNode { kind: ASTNodeKind::Invalid(InvalidNode::OpenLoopStart), span }
         }
