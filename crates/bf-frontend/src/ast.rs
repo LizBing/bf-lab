@@ -16,8 +16,10 @@ impl Span {
 
 #[derive(Debug)]
 pub enum ASTNodeKind {
-    Add(i8),
-    Move(i32),
+    Add,
+    Sub,
+    MoveLeft,
+    MoveRight,
     Input,
     Output,
     Loop { body: Vec<ASTNode> },
@@ -43,6 +45,7 @@ impl ASTNode {
 #[derive(Debug)]
 pub enum InvalidNode {
     OpenLoopStart,
+    
     OpenLoopEnd,
 }
 
