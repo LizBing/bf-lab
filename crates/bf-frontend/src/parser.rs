@@ -1,4 +1,4 @@
-use crate::{ast::{AST, ASTNodeKind, ASTNode, InvalidNode}, lexer::{Lexer, Token, TokenKind}, span::{self, Span}};
+use crate::{ast::{AST, ASTNode, ASTNodeKind, InvalidNode, Span}, lexer::{Token, TokenKind}};
 
 pub struct Parser {
     tokens: Vec<Token>,
