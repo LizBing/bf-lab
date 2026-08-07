@@ -156,7 +156,7 @@ impl Parser {
         };
         
         if is_closed {
-            ASTNode { kind: ASTNodeKind::Loop{ body }, span }
+            ASTNode { kind: ASTNodeKind::Loop { body }, span }
         } else {
             ASTNode { kind: ASTNodeKind::Invalid(InvalidNode::OpenLoopStart), span }
         }
