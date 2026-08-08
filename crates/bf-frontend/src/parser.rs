@@ -1,12 +1,12 @@
 use crate::{ast::{AST, ASTNode, ASTNodeKind, InvalidNode, Span}, lexer::{Token, TokenKind}};
 
-pub struct Parser {
-    tokens: Vec<Token>,
+pub struct Parser<'a> {
+    tokens: &'a [Token],
     pos: usize,
 }
 
-impl Parser {
-    pub fn new(tokens: Vec<Token>) -> Self {
+impl<'a> Parser<'a> {
+    pub fn new(tokens: &'a [Token]) -> Self {
         Self {
             tokens,
             pos: 0
@@ -14,7 +14,7 @@ impl Parser {
     }
 }
 
-impl Parser {
+impl Parser<'_> {
     fn peek(&self) -> Option<&Token> {
         self.tokens.get(self.pos)
     }
@@ -25,7 +25,7 @@ impl Parser {
     }
 }
 
-impl Parser {
+impl Parser<'_> {
     fn parse_one(&mut self, loc: usize, kind: ASTNodeKind) -> ASTNode {
         self.step();
 
@@ -58,6 +58,7 @@ impl Parser {
                     
                     TokenKind::LoopStart => self.parse_loop(last_loc),
                     TokenKind::LoopEnd  => {
+                        self.step();
                         is_closed = true;
                         break;
                     }

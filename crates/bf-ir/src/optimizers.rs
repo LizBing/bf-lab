@@ -27,13 +27,14 @@ impl PeepholeOptimizer<'_> {
 
 impl PeepholeOptimizer<'_> {
     fn compact_adds(&mut self) -> Option<Inst> {
-        let mut value = 0;
+        let mut value: i8 = 0;
 
         loop {
             match self.peek() {
-                Some(Inst::Add(n)) => value += *n,
+                Some(Inst::Add(n)) => value = value.wrapping_add(*n),
                 _ => break,
             }
+            self.step();
         }
 
         if value != 0 {
@@ -52,6 +53,7 @@ impl PeepholeOptimizer<'_> {
                 Some(Inst::Move(n)) => value += *n,
                 _ => break,
             }
+            self.step();
         }
 
         if value != 0 {

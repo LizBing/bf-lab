@@ -1,0 +1,9 @@
+[package]
+name = "bf-codegen"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bf-frontend = { path = "../bf-frontend" }
+bf-ir = { path = "../bf-ir" }
+

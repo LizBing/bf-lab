@@ -55,7 +55,7 @@ pub struct AST {
 }
 
 impl AST {
-    pub fn nodes(&self) -> &Vec<ASTNode> {
+    pub fn nodes(&self) -> &[ASTNode] {
         &self.nodes
     }
 }

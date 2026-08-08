@@ -2,6 +2,7 @@ use bf_frontend::ast::AST;
 
 use crate::{inst::Inst, ir::IRError::UnsupportedOptLevel, lowering::Lowerer, optimizers::PeepholeOptimizer};
 
+#[derive(Debug)]
 pub enum IRError {
     BadAST(AST),
     UnsupportedOptLevel(i32),
