@@ -1,10 +1,10 @@
-use std::{collections::HashSet, fs::File, io::{self, Write}, path::Path};
+use std::{collections::{BTreeMap, BTreeSet, HashSet}, fs::File, io::{self, Write}, path::Path};
 
 
 use crate::{c_func::CFunction, inst_translator::CodeLine};
 
 pub struct CodeFile {
-    funcs: HashSet<CFunction>,
+    funcs: BTreeSet<CFunction>,
 }
 
 impl CodeFile {
@@ -30,21 +30,30 @@ impl CodeFile {
 impl CodeFile {
     pub fn new() -> Self {
         Self {
-            funcs: HashSet::new(),
+            funcs: BTreeSet::new(),
+        }
+    }
+}
+
+#[derive(Debug)]
+pub enum AddFuncError {
+    DuplicatedFuncName(String),
+}
+
+impl CodeFile {
+    pub fn add_bf_func(&mut self, func: CFunction) -> Result<(), AddFuncError> {
+        let name = func.name.clone();
+        
+        if self.funcs.insert(func) {
+            Ok(())
+        } else {
+            Err(AddFuncError::DuplicatedFuncName(name))
         }
     }
 }
 
 impl CodeFile {
-    pub fn add_bf_func(&mut self, func: CFunction) -> bool {
-        self.funcs.insert(func)
-    }
-}
-
-impl CodeFile {
-    pub fn write_to_disk(self, path: &Path) -> io::Result<()> {
-        let mut file = File::create(path)?;
-
+    pub fn write_to(self, wr: &mut dyn Write) -> io::Result<()> {
         let mut lines = Vec::new();
 
         lines.append(&mut Self::prologue());
@@ -55,7 +64,7 @@ impl CodeFile {
         }
 
         for line in lines {
-            writeln!(&mut file, "{}", line.as_string())?;
+            writeln!(wr, "{}", line.as_string())?;
         }
 
         Ok(())

@@ -1,10 +1,12 @@
-use std::hash::Hash;
+use std::marker::PhantomData;
 
 use bf_ir::ir::IR;
 
 use crate::inst_translator::{CodeLine, InstTranslator};
 
 pub struct CFunction {
+    __: PhantomData<()>,
+    
     pub name: String,
     pub lines: Vec<CodeLine>,
 }
@@ -17,9 +19,15 @@ impl PartialEq for CFunction {
 
 impl Eq for CFunction {}
 
-impl Hash for CFunction {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        self.name.hash(state);
+impl PartialOrd for CFunction {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.name.partial_cmp(&other.name)
+    }
+}
+
+impl Ord for CFunction {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.name.cmp(&other.name)
     }
 }
 
@@ -44,6 +52,7 @@ impl CFunction {
         lines.append(&mut Self::epilogue());
 
         Self {
+            __: PhantomData,
             name: name.into(),
             lines,
         }
