@@ -29,14 +29,12 @@ impl Token {
 }
 
 pub struct Lexer<'a> {
-    raw: &'a str,
     iter: CharIndices<'a>,
 }
 
 impl<'a> Lexer<'a> {
     pub fn new(raw: &'a str) -> Self {
         Self {
-            raw,
             iter: raw.char_indices()
         }
     }

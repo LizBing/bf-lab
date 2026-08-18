@@ -8,6 +8,7 @@ pub enum IRError {
     UnsupportedOptLevel(i32),
 }
 
+#[derive(Clone)]
 pub struct IR {
     insts: Vec<Inst>,
 }

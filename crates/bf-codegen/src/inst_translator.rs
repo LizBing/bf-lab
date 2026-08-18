@@ -1,6 +1,30 @@
 use bf_ir::inst::{Inst, Label};
 
-use crate::code_file::CodeLine;
+pub struct CodeLine {
+    indents: usize,
+    content: String,
+}
+
+impl CodeLine {
+    pub fn new(indents: usize, content: String) -> Self {
+        Self {
+            indents,
+            content,
+        }
+    }
+
+    pub fn new_empty_line() -> Self {
+        Self::new(0, "".into())
+    }
+}
+
+impl CodeLine {    
+    pub fn as_string(&self) -> String {
+        let spaces: String = std::iter::repeat(' ').take(self.indents).collect();
+        format!("{}{}", spaces, self.content)
+    }
+}
+
 
 pub struct InstTranslator {
     boundary_check: bool,
@@ -14,18 +38,7 @@ impl InstTranslator {
     }
 }
 
-impl InstTranslator {
-    pub fn translate(self, insts: &[Inst]) -> Vec<CodeLine> {
-        let mut lines = Vec::new();
-
-        for inst in insts {
-            let mut sub_lines = self.translate_one(inst);
-            lines.append(&mut sub_lines);
-        }
-
-        lines
-    }
-    
+impl InstTranslator {    
     pub fn translate_one(&self, inst: &Inst) -> Vec<CodeLine> {
         let mut lines = Vec::new();
 
@@ -45,23 +58,29 @@ impl InstTranslator {
 
                 lines.push(CodeLine::new(
                     8,
-                    format!("size_t target_pos = pos + {};", *n)
+                    format!("bf_off_t new_pos = pos + {};", *n)
                 ));
                 
                 if self.boundary_check {
+                    let err_kind_str = if *n >= 0 {
+                        "BFErrorOverflow"
+                    } else {
+                        "BFErrorUnderflow"
+                    };
+                    
                     lines.push(CodeLine::new(
                         8,
-                        "if (target_pos >= TAPE_LEN) {".into()
+                        "if (new_pos >= TAPE_LEN) {".into()
                     ));
 
                     lines.push(CodeLine::new(
                         12,
-                        "fprintf(stderr, \"Access tape[%zu]: Out of tape(len: %zu) boundary.\", target_pos, TAPE_LEN);".into()
+                        format!("report->error_kind = {};", err_kind_str)
                     ));
 
                     lines.push(CodeLine::new(
                         12,
-                        "exit(1);".into()
+                        "return BF_FALSE;".into()
                     ));
 
                     lines.push(CodeLine::new(
@@ -72,7 +91,7 @@ impl InstTranslator {
 
                 lines.push(CodeLine::new(
                     8,
-                    "pos = target_pos;".into()
+                    "pos = new_pos;".into()
                 ));
 
                 lines.push(CodeLine::new(
@@ -84,14 +103,44 @@ impl InstTranslator {
             Inst::Input => {
                 lines.push(CodeLine::new(
                     4,
-                    "tape[pos] = getchar();".into(),
+                    "if (!calls.getchar(env, tape + pos)) {".into()
+                ));
+
+                lines.push(CodeLine::new(
+                    8,
+                    "report->error_kind = BFErrorInStream;".into()
+                ));
+
+                lines.push(CodeLine::new(
+                    8,
+                    "return BF_FALSE;".into()
+                ));
+                
+                lines.push(CodeLine::new(
+                    4,
+                    "}".into(),
                 ));
             }
 
             Inst::Output => {
                 lines.push(CodeLine::new(
                     4,
-                    "putchar(tape[pos]);".into(),
+                    "if (!calls.putchar(env, tape[pos])) {".into()
+                ));
+
+                lines.push(CodeLine::new(
+                    8,
+                    "report->error_kind = BFErrorOutStream;".into()
+                ));
+
+                lines.push(CodeLine::new(
+                    8,
+                    "return BF_FALSE;".into()
+                ));
+                
+                lines.push(CodeLine::new(
+                    4,
+                    "}".into(),
                 ));
             }
 
@@ -112,12 +161,7 @@ impl InstTranslator {
             Inst::JumpIfZero(Label(id)) => {
                 lines.push(CodeLine::new(
                     4,
-                    "if (0 == tape[pos])".into()
-                ));
-
-                lines.push(CodeLine::new(
-                    8,
-                    format!("goto L{};", *id)
+                    format!("if (0 == tape[pos]) goto L{};", *id)
                 ));
             }
         }
