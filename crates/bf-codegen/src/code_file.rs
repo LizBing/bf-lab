@@ -19,7 +19,7 @@ impl CodeFile {
 
         lines.push(CodeLine::new_empty_line());
 
-        lines.push(CodeLine::new(0, "#include \"bfni.h\"".into()));
+        lines.push(CodeLine::new(0, "#include <bfni.h>".into()));
 
         lines
     }
