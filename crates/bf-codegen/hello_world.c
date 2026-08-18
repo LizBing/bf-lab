@@ -2,17 +2,16 @@
 
 #include "bfni.h"
 
-bf_bool_t hello_world(BFCalls calls, BFRuntimeEnv* env, BFRuntimeReport* report) {
+bf_bool_t hello(BFCalls calls, BFRuntimeEnv* env, BFRuntimeReport* report) {
 // Preparation starts.
-    report->file_name = __FILE__;
-    report->func_name = __FUNCTION__;
+    *report = (BFRuntimeReport){
+        .file_name = __FILE__,
+        .func_name = __func__,
+        .error_kind = NoBFError,
+    };
 
     const bf_size_t TAPE_LEN = calls.tape_len(env);
-    bf_byte_t* tape = calls.alloc_tape(env, TAPE_LEN);
-    if (BF_NULL == tape) {
-        report->error_kind = BFErrorOutOfMemory;
-        return BF_FALSE;
-    }
+    bf_byte_t* tape = calls.get_tape(env);
     bf_off_t pos = 0;
 // Preparation ends.
 
@@ -287,17 +286,16 @@ L9:
     return BF_TRUE;
 }
 
-bf_bool_t hello(BFCalls calls, BFRuntimeEnv* env, BFRuntimeReport* report) {
+bf_bool_t hello_world(BFCalls calls, BFRuntimeEnv* env, BFRuntimeReport* report) {
 // Preparation starts.
-    report->file_name = __FILE__;
-    report->func_name = __FUNCTION__;
+    *report = (BFRuntimeReport){
+        .file_name = __FILE__,
+        .func_name = __func__,
+        .error_kind = NoBFError,
+    };
 
     const bf_size_t TAPE_LEN = calls.tape_len(env);
-    bf_byte_t* tape = calls.alloc_tape(env, TAPE_LEN);
-    if (BF_NULL == tape) {
-        report->error_kind = BFErrorOutOfMemory;
-        return BF_FALSE;
-    }
+    bf_byte_t* tape = calls.get_tape(env);
     bf_off_t pos = 0;
 // Preparation ends.
 

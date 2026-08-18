@@ -64,14 +64,29 @@ impl CFunction {
 
         lines.push(CodeLine::new(
             4,
-            "report->file_name = __FILE__;".into()
+            "*report = (BFRuntimeReport){".into()
         ));
         
         lines.push(CodeLine::new(
-            4,
-            "report->func_name = __FUNCTION__;".into()
+            8,
+            ".file_name = __FILE__,".into()
         ));
         
+        lines.push(CodeLine::new(
+            8,
+            ".func_name = __func__,".into()
+        ));
+
+        lines.push(CodeLine::new(
+            8,
+            ".error_kind = NoBFError,".into()
+        ));
+
+        lines.push(CodeLine::new(
+            4,
+            "};".into()
+        ));
+
         lines.push(CodeLine::new_empty_line());
 
         lines.push(CodeLine::new(
@@ -81,25 +96,7 @@ impl CFunction {
 
         lines.push(CodeLine::new(
             4,
-            "bf_byte_t* tape = calls.alloc_tape(env, TAPE_LEN);".into()
-        ));
-
-        lines.push(CodeLine::new(
-            4,
-            "if (BF_NULL == tape) {".into()
-        ));
-        lines.push(CodeLine::new(
-            8,
-            "report->error_kind = BFErrorOutOfMemory;".into()
-        ));
-        lines.push(CodeLine::new(
-            8,
-            "return BF_FALSE;".into()
-        ));
-        
-        lines.push(CodeLine::new(
-            4,
-            "}".into()
+            "bf_byte_t* tape = calls.get_tape(env);".into()
         ));
         
         lines.push(CodeLine::new(
