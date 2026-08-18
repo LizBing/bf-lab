@@ -1,14 +1,10 @@
-use std::marker::PhantomData;
-
 use bf_ir::ir::IR;
 
 use crate::inst_translator::{CodeLine, InstTranslator};
 
 pub struct CFunction {
-    __: PhantomData<()>,
-    
-    pub name: String,
-    pub lines: Vec<CodeLine>,
+    pub(crate) name: String,
+    pub(crate) lines: Vec<CodeLine>,
 }
 
 impl PartialEq for CFunction {
@@ -21,7 +17,7 @@ impl Eq for CFunction {}
 
 impl PartialOrd for CFunction {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        self.name.partial_cmp(&other.name)
+        Some(self.cmp(other))
     }
 }
 
@@ -32,6 +28,10 @@ impl Ord for CFunction {
 }
 
 impl CFunction {
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
     pub fn signature(name: &str) -> String {
         format!("bf_bool_t {}(BFCalls calls, BFRuntimeEnv* env, BFRuntimeReport* report)", name)
     }
@@ -52,7 +52,6 @@ impl CFunction {
         lines.append(&mut Self::epilogue());
 
         Self {
-            __: PhantomData,
             name: name.into(),
             lines,
         }
@@ -75,12 +74,12 @@ impl CFunction {
             4,
             "*report = (BFRuntimeReport){".into()
         ));
-        
+
         lines.push(CodeLine::new(
             8,
             ".file_name = __FILE__,".into()
         ));
-        
+
         lines.push(CodeLine::new(
             8,
             ".func_name = __func__,".into()
@@ -107,7 +106,7 @@ impl CFunction {
             4,
             "bf_byte_t* tape = calls.get_tape(env);".into()
         ));
-        
+
         lines.push(CodeLine::new(
             4,
             "bf_off_t pos = 0;".into()
@@ -117,7 +116,7 @@ impl CFunction {
             0,
             "// Preparation ends.".into()
         ));
-        
+
         lines.push(CodeLine::new_empty_line());
 
         lines.push(CodeLine::new(

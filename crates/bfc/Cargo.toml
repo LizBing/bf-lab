@@ -1,0 +1,8 @@
+[package]
+name = "bfc"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bf-codegen = { path = "../bf-codegen" }
+clap = { version = "4.6", features = ["derive"] }

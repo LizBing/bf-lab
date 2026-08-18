@@ -18,7 +18,7 @@ impl CodeLine {
     }
 }
 
-impl CodeLine {    
+impl CodeLine {
     pub fn as_string(&self) -> String {
         let spaces: String = std::iter::repeat(' ').take(self.indents).collect();
         format!("{}{}", spaces, self.content)
@@ -38,7 +38,7 @@ impl InstTranslator {
     }
 }
 
-impl InstTranslator {    
+impl InstTranslator {
     pub fn translate_one(&self, inst: &Inst) -> Vec<CodeLine> {
         let mut lines = Vec::new();
 
@@ -60,14 +60,14 @@ impl InstTranslator {
                     8,
                     format!("bf_off_t new_pos = pos + {};", *n)
                 ));
-                
+
                 if self.boundary_check {
                     let err_kind_str = if *n >= 0 {
                         "BFErrorOverflow"
                     } else {
                         "BFErrorUnderflow"
                     };
-                    
+
                     lines.push(CodeLine::new(
                         8,
                         "if (new_pos >= TAPE_LEN) {".into()
@@ -115,7 +115,7 @@ impl InstTranslator {
                     8,
                     "return BF_FALSE;".into()
                 ));
-                
+
                 lines.push(CodeLine::new(
                     4,
                     "}".into(),
@@ -137,7 +137,7 @@ impl InstTranslator {
                     8,
                     "return BF_FALSE;".into()
                 ));
-                
+
                 lines.push(CodeLine::new(
                     4,
                     "}".into(),
@@ -165,7 +165,7 @@ impl InstTranslator {
                 ));
             }
         }
-        
+
         lines
     }
 }

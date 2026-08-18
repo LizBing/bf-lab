@@ -1,2 +1,3 @@
 [workspace]
-members = ["crates/bf-codegen","crates/bf-frontend", "crates/bf-ir"]
+members = ["crates/bf-codegen", "crates/bf-frontend", "crates/bf-ir", "crates/bfc"]
+resolver = "3"
