@@ -1,8 +1,13 @@
 [package]
-name = "bfc"
+name = "bf-cli"
 version = "0.1.0"
 edition = "2024"
+
+[[bin]]
+name = "bf"
+path = "src/main.rs"
 
 [dependencies]
 bf-codegen = { path = "../bf-codegen" }
 clap = { version = "4.6", features = ["derive"] }
+tempfile = "3.23"
