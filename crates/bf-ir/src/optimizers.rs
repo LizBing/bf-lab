@@ -2,15 +2,12 @@ use crate::inst::Inst;
 
 pub struct PeepholeOptimizer<'a> {
     target: &'a [Inst],
-    pos: usize
+    pos: usize,
 }
 
 impl<'a> PeepholeOptimizer<'a> {
     pub fn new(target: &'a [Inst]) -> Self {
-        Self {
-            target,
-            pos: 0
-        }
+        Self { target, pos: 0 }
     }
 }
 
@@ -29,11 +26,8 @@ impl PeepholeOptimizer<'_> {
     fn compact_adds(&mut self) -> Option<Inst> {
         let mut value: i8 = 0;
 
-        loop {
-            match self.peek() {
-                Some(Inst::Add(n)) => value = value.wrapping_add(*n),
-                _ => break,
-            }
+        while let Some(Inst::Add(n)) = self.peek() {
+            value = value.wrapping_add(*n);
             self.step();
         }
 
@@ -44,15 +38,11 @@ impl PeepholeOptimizer<'_> {
         }
     }
 
-    
     fn compact_moves(&mut self) -> Option<Inst> {
         let mut value = 0;
 
-        loop {
-            match self.peek() {
-                Some(Inst::Move(n)) => value += *n,
-                _ => break,
-            }
+        while let Some(Inst::Move(n)) = self.peek() {
+            value += *n;
             self.step();
         }
 
@@ -70,9 +60,9 @@ impl PeepholeOptimizer<'_> {
             Inst::JumpIfZero(l) => l,
             _ => unreachable!(),
         };
-        
+
         self.step();
-        
+
         let label = match self.peek() {
             Some(Inst::Label(l)) => l,
             _ => return Some(jump),
@@ -89,32 +79,38 @@ impl PeepholeOptimizer<'_> {
 impl PeepholeOptimizer<'_> {
     pub fn optimize(mut self) -> Vec<Inst> {
         let mut res = Vec::new();
-        
+
         loop {
             match self.peek() {
                 None => break,
 
-                Some(Inst::Add(_)) => if let Some(inst) = self.compact_adds() {
-                    res.push(inst);
-                },
+                Some(Inst::Add(_)) => {
+                    if let Some(inst) = self.compact_adds() {
+                        res.push(inst);
+                    }
+                }
 
-                Some(Inst::Move(_)) => if let Some(inst) = self.compact_moves() {
-                    res.push(inst);
-                },
+                Some(Inst::Move(_)) => {
+                    if let Some(inst) = self.compact_moves() {
+                        res.push(inst);
+                    }
+                }
 
                 Some(Inst::Input) => {
                     res.push(Inst::Input);
                     self.step();
                 }
-                
+
                 Some(Inst::Output) => {
                     res.push(Inst::Output);
                     self.step();
                 }
 
-                Some(Inst::Jump(_) | Inst::JumpIfZero(_)) => if let Some(inst) = self.clean_jump() {
-                    res.push(inst);
-                },
+                Some(Inst::Jump(_) | Inst::JumpIfZero(_)) => {
+                    if let Some(inst) = self.clean_jump() {
+                        res.push(inst);
+                    }
+                }
 
                 Some(Inst::Label(l)) => {
                     res.push(Inst::Label(*l));

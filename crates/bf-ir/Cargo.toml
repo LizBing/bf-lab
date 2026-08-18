@@ -1,7 +1,14 @@
 [package]
 name = "bf-ir"
-version = "0.1.0"
-edition = "2024"
+description = "Intermediate representation, lowering, and optimizers for bf-lab"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+readme.workspace = true
+keywords = ["brainfuck", "compiler", "ir", "optimizer"]
+categories = ["compilers", "development-tools"]
 
 [dependencies]
-bf-frontend = { path = "../bf-frontend" }
+bf-frontend = { version = "0.1.0", path = "../bf-frontend" }

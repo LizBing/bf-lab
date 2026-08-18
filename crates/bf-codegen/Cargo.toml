@@ -1,9 +1,15 @@
 [package]
 name = "bf-codegen"
-version = "0.1.0"
-edition = "2024"
+description = "Compile Brainfuck source into freestanding C with the BFNI ABI"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+readme.workspace = true
+keywords = ["brainfuck", "compiler", "codegen", "freestanding"]
+categories = ["compilers", "development-tools"]
 
 [dependencies]
-bf-frontend = { path = "../bf-frontend" }
-bf-ir = { path = "../bf-ir" }
-
+bf-frontend = { version = "0.1.0", path = "../bf-frontend" }
+bf-ir = { version = "0.1.0", path = "../bf-ir" }

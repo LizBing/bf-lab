@@ -60,7 +60,7 @@ pub fn compile_function(
     let parser = Parser::new(&tokens);
     let ast = parser.parse();
 
-    let ir = IR::new(ast, options.opt_level).map_err(|e| CompileError::IR(e))?;
+    let ir = IR::new(ast, options.opt_level).map_err(CompileError::IR)?;
 
     Ok(CFunction::new(func_name, ir, options.boundary_check))
 }

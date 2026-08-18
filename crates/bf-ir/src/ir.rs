@@ -1,6 +1,8 @@
 use bf_frontend::ast::AST;
 
-use crate::{inst::Inst, ir::IRError::UnsupportedOptLevel, lowering::Lowerer, optimizers::PeepholeOptimizer};
+use crate::{
+    inst::Inst, ir::IRError::UnsupportedOptLevel, lowering::Lowerer, optimizers::PeepholeOptimizer,
+};
 
 #[derive(Debug)]
 pub enum IRError {
@@ -18,7 +20,7 @@ impl IR {
         let lowerer = Lowerer::new();
         let mut insts = match lowerer.build(&ast) {
             None => return Err(IRError::BadAST(ast)),
-            Some(x) => x
+            Some(x) => x,
         };
 
         match opt_level {

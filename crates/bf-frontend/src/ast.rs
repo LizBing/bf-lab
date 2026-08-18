@@ -23,7 +23,7 @@ pub enum ASTNodeKind {
     Input,
     Output,
     Loop { body: Vec<ASTNode> },
-    Invalid(InvalidNode)
+    Invalid(InvalidNode),
 }
 
 #[derive(Debug)]
@@ -45,13 +45,13 @@ impl ASTNode {
 #[derive(Debug)]
 pub enum InvalidNode {
     OpenLoopStart,
-    
+
     OpenLoopEnd,
 }
 
 #[derive(Debug)]
 pub struct AST {
-    pub(crate) nodes: Vec<ASTNode>
+    pub(crate) nodes: Vec<ASTNode>,
 }
 
 impl AST {

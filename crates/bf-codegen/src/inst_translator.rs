@@ -7,10 +7,7 @@ pub struct CodeLine {
 
 impl CodeLine {
     pub fn new(indents: usize, content: String) -> Self {
-        Self {
-            indents,
-            content,
-        }
+        Self { indents, content }
     }
 
     pub fn new_empty_line() -> Self {
@@ -20,11 +17,10 @@ impl CodeLine {
 
 impl CodeLine {
     pub fn as_string(&self) -> String {
-        let spaces: String = std::iter::repeat(' ').take(self.indents).collect();
+        let spaces = " ".repeat(self.indents);
         format!("{}{}", spaces, self.content)
     }
 }
-
 
 pub struct InstTranslator {
     boundary_check: bool,
@@ -32,9 +28,7 @@ pub struct InstTranslator {
 
 impl InstTranslator {
     pub fn new(boundary_check: bool) -> Self {
-        Self {
-            boundary_check,
-        }
+        Self { boundary_check }
     }
 }
 
@@ -44,21 +38,15 @@ impl InstTranslator {
 
         match inst {
             Inst::Add(n) => {
-                lines.push(CodeLine::new(
-                    4,
-                    format!("tape[pos] += {};", *n)
-                ));
+                lines.push(CodeLine::new(4, format!("tape[pos] += {};", *n)));
             }
 
             Inst::Move(n) => {
-                lines.push(CodeLine::new(
-                    4,
-                    "{".into()
-                ));
+                lines.push(CodeLine::new(4, "{".into()));
 
                 lines.push(CodeLine::new(
                     8,
-                    format!("bf_off_t new_pos = pos + {};", *n)
+                    format!("bf_off_t new_pos = pos + {};", *n),
                 ));
 
                 if self.boundary_check {
@@ -68,100 +56,67 @@ impl InstTranslator {
                         "BFErrorUnderflow"
                     };
 
-                    lines.push(CodeLine::new(
-                        8,
-                        "if (new_pos >= TAPE_LEN) {".into()
-                    ));
+                    lines.push(CodeLine::new(8, "if (new_pos >= TAPE_LEN) {".into()));
 
                     lines.push(CodeLine::new(
                         12,
-                        format!("report->error_kind = {};", err_kind_str)
+                        format!("report->error_kind = {};", err_kind_str),
                     ));
 
-                    lines.push(CodeLine::new(
-                        12,
-                        "return BF_FALSE;".into()
-                    ));
+                    lines.push(CodeLine::new(12, "return BF_FALSE;".into()));
 
-                    lines.push(CodeLine::new(
-                        8,
-                        "}".into()
-                    ));
+                    lines.push(CodeLine::new(8, "}".into()));
                 }
 
-                lines.push(CodeLine::new(
-                    8,
-                    "pos = new_pos;".into()
-                ));
+                lines.push(CodeLine::new(8, "pos = new_pos;".into()));
 
-                lines.push(CodeLine::new(
-                    4,
-                    "}".into()
-                ));
+                lines.push(CodeLine::new(4, "}".into()));
             }
 
             Inst::Input => {
                 lines.push(CodeLine::new(
                     4,
-                    "if (!calls.getchar(env, tape + pos)) {".into()
+                    "if (!calls.getchar(env, tape + pos)) {".into(),
                 ));
 
                 lines.push(CodeLine::new(
                     8,
-                    "report->error_kind = BFErrorInStream;".into()
+                    "report->error_kind = BFErrorInStream;".into(),
                 ));
 
-                lines.push(CodeLine::new(
-                    8,
-                    "return BF_FALSE;".into()
-                ));
+                lines.push(CodeLine::new(8, "return BF_FALSE;".into()));
 
-                lines.push(CodeLine::new(
-                    4,
-                    "}".into(),
-                ));
+                lines.push(CodeLine::new(4, "}".into()));
             }
 
             Inst::Output => {
                 lines.push(CodeLine::new(
                     4,
-                    "if (!calls.putchar(env, tape[pos])) {".into()
+                    "if (!calls.putchar(env, tape[pos])) {".into(),
                 ));
 
                 lines.push(CodeLine::new(
                     8,
-                    "report->error_kind = BFErrorOutStream;".into()
+                    "report->error_kind = BFErrorOutStream;".into(),
                 ));
 
-                lines.push(CodeLine::new(
-                    8,
-                    "return BF_FALSE;".into()
-                ));
+                lines.push(CodeLine::new(8, "return BF_FALSE;".into()));
 
-                lines.push(CodeLine::new(
-                    4,
-                    "}".into(),
-                ));
+                lines.push(CodeLine::new(4, "}".into()));
             }
 
             Inst::Label(Label(id)) => {
-                lines.push(CodeLine::new(
-                    0,
-                    format!("L{}:", *id)
-                ));
+                lines.push(CodeLine::new(0, format!("L{}:", *id)));
             }
 
             Inst::Jump(Label(id)) => {
-                lines.push(CodeLine::new(
-                    4,
-                    format!("goto L{};", *id)
-                ));
+                lines.push(CodeLine::new(4, format!("goto L{};", *id)));
             }
 
             Inst::JumpIfZero(Label(id)) => {
                 lines.push(CodeLine::new(
                     4,
-                    format!("if (0 == tape[pos]) goto L{};", *id)
+                    format!("if (0 == tape[pos]) goto L{};", *id),
                 ));
             }
         }

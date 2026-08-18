@@ -33,7 +33,10 @@ impl CFunction {
     }
 
     pub fn signature(name: &str) -> String {
-        format!("bf_bool_t {}(BFCalls calls, BFRuntimeEnv* env, BFRuntimeReport* report)", name)
+        format!(
+            "bf_bool_t {}(BFCalls calls, BFRuntimeEnv* env, BFRuntimeReport* report)",
+            name
+        )
     }
 }
 
@@ -60,93 +63,49 @@ impl CFunction {
     fn prologue(name: &str) -> Vec<CodeLine> {
         let mut lines = Vec::new();
 
-        lines.push(CodeLine::new(
-            0,
-            format!("{} {{", Self::signature(name))
-        ));
+        lines.push(CodeLine::new(0, format!("{} {{", Self::signature(name))));
 
-        lines.push(CodeLine::new(
-            0,
-            "// Preparation starts.".into()
-        ));
+        lines.push(CodeLine::new(0, "// Preparation starts.".into()));
 
-        lines.push(CodeLine::new(
-            4,
-            "*report = (BFRuntimeReport){".into()
-        ));
+        lines.push(CodeLine::new(4, "*report = (BFRuntimeReport){".into()));
 
-        lines.push(CodeLine::new(
-            8,
-            ".file_name = __FILE__,".into()
-        ));
+        lines.push(CodeLine::new(8, ".file_name = __FILE__,".into()));
 
-        lines.push(CodeLine::new(
-            8,
-            ".func_name = __func__,".into()
-        ));
+        lines.push(CodeLine::new(8, ".func_name = __func__,".into()));
 
-        lines.push(CodeLine::new(
-            8,
-            ".error_kind = NoBFError,".into()
-        ));
+        lines.push(CodeLine::new(8, ".error_kind = NoBFError,".into()));
 
-        lines.push(CodeLine::new(
-            4,
-            "};".into()
-        ));
+        lines.push(CodeLine::new(4, "};".into()));
 
         lines.push(CodeLine::new_empty_line());
 
         lines.push(CodeLine::new(
             4,
-            "const bf_size_t TAPE_LEN = calls.tape_len(env);".into()
+            "const bf_size_t TAPE_LEN = calls.tape_len(env);".into(),
         ));
 
         lines.push(CodeLine::new(
             4,
-            "bf_byte_t* tape = calls.get_tape(env);".into()
+            "bf_byte_t* tape = calls.get_tape(env);".into(),
         ));
 
-        lines.push(CodeLine::new(
-            4,
-            "bf_off_t pos = 0;".into()
-        ));
+        lines.push(CodeLine::new(4, "bf_off_t pos = 0;".into()));
 
-        lines.push(CodeLine::new(
-            0,
-            "// Preparation ends.".into()
-        ));
+        lines.push(CodeLine::new(0, "// Preparation ends.".into()));
 
         lines.push(CodeLine::new_empty_line());
 
-        lines.push(CodeLine::new(
-            0,
-            "// Code starts.".into()
-        ));
+        lines.push(CodeLine::new(0, "// Code starts.".into()));
 
         lines
     }
 
     fn epilogue() -> Vec<CodeLine> {
-        let mut lines = Vec::new();
-
-        lines.push(CodeLine::new(
-            0,
-            "// Code ends.".into()
-        ));
-
-        lines.push(CodeLine::new_empty_line());
-
-        lines.push(CodeLine::new(
-            4,
-            "return BF_TRUE;".into()
-        ));
-
-        lines.push(CodeLine::new(
-            0,
-            "}".into()
-        ));
-
-        lines
+        vec![
+            CodeLine::new(0, "// Code ends.".into()),
+            CodeLine::new_empty_line(),
+            CodeLine::new(4, "return BF_TRUE;".into()),
+            CodeLine::new(0, "}".into()),
+        ]
     }
 }

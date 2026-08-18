@@ -7,6 +7,12 @@ pub struct Lowerer {
     insts: Vec<Inst>,
 }
 
+impl Default for Lowerer {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Lowerer {
     pub fn new() -> Self {
         Self {
@@ -30,8 +36,8 @@ impl Lowerer {
         self.lower(ast.nodes())?;
         Some(self.insts)
     }
-    
-    fn lower(&mut self, nodes: &[ASTNode]) -> Option<()> {        
+
+    fn lower(&mut self, nodes: &[ASTNode]) -> Option<()> {
         for n in nodes {
             match n.kind() {
                 ASTNodeKind::Add => self.insts.push(Inst::Add(1)),
@@ -40,17 +46,17 @@ impl Lowerer {
                 ASTNodeKind::MoveRight => self.insts.push(Inst::Move(1)),
                 ASTNodeKind::Input => self.insts.push(Inst::Input),
                 ASTNodeKind::Output => self.insts.push(Inst::Output),
-                
+
                 ASTNodeKind::Loop { body } => {
                     let loop_start = self.new_label();
                     let loop_end = self.new_label();
 
                     self.insts.push(Inst::Label(loop_start));
-                    
+
                     self.insts.push(Inst::JumpIfZero(loop_end));
                     self.lower(body)?;
                     self.insts.push(Inst::Jump(loop_start));
-                    
+
                     self.insts.push(Inst::Label(loop_end));
                 }
 

@@ -1,6 +1,13 @@
 [package]
 name = "bf-frontend"
-version = "0.1.0"
-edition = "2024"
+description = "Lexer, parser, and AST for the bf-lab Brainfuck toolchain"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+readme.workspace = true
+keywords = ["brainfuck", "compiler", "lexer", "parser"]
+categories = ["compilers", "parser-implementations"]
 
 [dependencies]

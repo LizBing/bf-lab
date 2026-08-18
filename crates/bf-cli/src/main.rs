@@ -12,8 +12,8 @@ use bf_codegen::{CodeFile, CompileOptions, compile_function};
 use clap::{Args, Parser, Subcommand};
 
 const ENTRY_NAME: &str = "bf_entry";
-const BFNI_HEADER: &str = include_str!("../../../include/bfni.h");
-const HOST_RUNTIME: &str = include_str!("../../../runtime/host/bfni_host.c");
+const BFNI_HEADER: &str = include_str!("../assets/bfni.h");
+const HOST_RUNTIME: &str = include_str!("../assets/bfni_host.c");
 
 /// Compile and run Brainfuck programs.
 #[derive(Debug, Parser)]
@@ -315,5 +315,19 @@ mod tests {
             output,
             PathBuf::from(format!("hello{}", env::consts::EXE_SUFFIX))
         );
+    }
+
+    #[test]
+    fn embedded_runtime_assets_match_workspace_copies() {
+        let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_header = manifest_dir.join("../../include/bfni.h");
+        let workspace_runtime = manifest_dir.join("../../runtime/host/bfni_host.c");
+
+        // The published package is self-contained and has no workspace parent.
+        // When testing in this repository, keep both public copies in sync.
+        if workspace_header.exists() && workspace_runtime.exists() {
+            assert_eq!(fs::read_to_string(workspace_header).unwrap(), BFNI_HEADER);
+            assert_eq!(fs::read_to_string(workspace_runtime).unwrap(), HOST_RUNTIME);
+        }
     }
 }

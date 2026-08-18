@@ -35,59 +35,59 @@ pub struct Lexer<'a> {
 impl<'a> Lexer<'a> {
     pub fn new(raw: &'a str) -> Self {
         Self {
-            iter: raw.char_indices()
+            iter: raw.char_indices(),
         }
     }
 }
 
 impl Iterator for Lexer<'_> {
     type Item = Token;
-    
+
     fn next(&mut self) -> Option<Self::Item> {
         loop {
             let (offs, c) = self.iter.next()?;
-            
+
             let res = match c {
                 '+' => Token {
                     kind: TokenKind::Add,
-                    loc: offs
+                    loc: offs,
                 },
-    
+
                 '-' => Token {
                     kind: TokenKind::Sub,
-                    loc: offs
+                    loc: offs,
                 },
-    
+
                 '<' => Token {
                     kind: TokenKind::MoveLeft,
-                    loc: offs
+                    loc: offs,
                 },
-    
+
                 '>' => Token {
                     kind: TokenKind::MoveRight,
-                    loc: offs
+                    loc: offs,
                 },
-    
+
                 '[' => Token {
                     kind: TokenKind::LoopStart,
-                    loc: offs
+                    loc: offs,
                 },
-    
+
                 ']' => Token {
                     kind: TokenKind::LoopEnd,
-                    loc: offs
+                    loc: offs,
                 },
-    
+
                 ',' => Token {
                     kind: TokenKind::Input,
-                    loc: offs
+                    loc: offs,
                 },
-    
+
                 '.' => Token {
                     kind: TokenKind::Output,
-                    loc: offs
+                    loc: offs,
                 },
-    
+
                 _ => continue,
             };
 
